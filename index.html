@@ -818,7 +818,7 @@
         function loadData() {
             const timestamp = new Date().getTime();
             
-            fetch(`${GOOGLE_SHEET_URL}?type=${currentProduction}&_=${timestamp}`)
+            fetch(`${GOOGLE_SHEET_URL}?type=${currentProduction}&action=getDashboard&_=${timestamp}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log('Response:', data);
@@ -891,8 +891,10 @@
             const permOff = document.getElementById('permManageOff');
             if (userPermissions.canManageOffDays) {
                 permOff.className = 'permission-item allowed';
+                document.getElementById('offBtn').style.display = 'flex';
             } else {
                 permOff.className = 'permission-item denied';
+                document.getElementById('offBtn').style.display = 'none';
             }
             
             // Update action buttons
@@ -924,8 +926,14 @@
                 };
             }
             
-            if (userPermissions.canManageOffDays) {
-                offBtn.style.display = 'flex';
+            if (!userPermissions.canManageOffDays) {
+                offBtn.style.opacity = '0.5';
+                offBtn.style.cursor = 'not-allowed';
+                offBtn.title = 'You do not have permission to manage OFF days';
+                offBtn.onclick = function(e) {
+                    e.preventDefault();
+                    alert('Access Denied: You do not have permission to manage OFF days.');
+                };
             }
         }
         
